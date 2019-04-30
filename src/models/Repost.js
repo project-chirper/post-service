@@ -13,4 +13,12 @@ const RepostSchema = mongoose.Schema({
   collection: 'reposts'
 })
 
+RepostSchema.methods.publicData = function() {
+  return {
+    id: this._id,
+    repost: this.repost.publicData(),
+    message: this.post.message
+  }
+}
+
 mongoose.model('Repost', RepostSchema)

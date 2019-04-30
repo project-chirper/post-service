@@ -13,4 +13,12 @@ const PostReplySchema = new mongoose.Schema({
   collection: 'postreplies'
 })
 
+PostReplySchema.methods.publicData = function() {
+  return {
+    id: this._id,
+    replyingTo: this.replyingTo.publicData(),
+    message: this.post.message
+  }
+}
+
 mongoose.model('PostReply', PostReplySchema)

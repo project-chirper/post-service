@@ -11,4 +11,11 @@ const BasePostSchema = new mongoose.Schema({
   collection: 'baseposts'
 })
 
+BasePostSchema.methods.publicData = function() {
+  return {
+    id: this._id,
+    message: this.message
+  }
+}
+
 mongoose.model('BasePost', BasePostSchema)

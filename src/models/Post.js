@@ -35,4 +35,19 @@ const PostSchema = mongoose.Schema({
   collection: 'posts'
 })
 
+PostSchema.methods.publicData = function() {
+  return {
+    id: this._id,
+    author: this.author,
+    dateCreated: this.dateCreated,
+    body: this.body.publicData(),
+    type: this.type,
+    stats: {
+      likes: this.likedBy.length,
+      reposts: this.repostedBy.length,
+      replies: this.replies.length
+    }
+  }
+}
+
 mongoose.model('Post', PostSchema)
