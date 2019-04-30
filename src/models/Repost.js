@@ -13,10 +13,15 @@ const RepostSchema = mongoose.Schema({
   collection: 'reposts'
 })
 
-RepostSchema.methods.publicData = function() {
+/**
+ * @desc Returns Repost public data
+ * @param viewer Viewer ID
+ * @return JSON
+ */
+RepostSchema.methods.publicData = async function(viewer) {
   return {
     id: this._id,
-    repost: this.repost.publicData(),
+    repost: await this.repost.publicData(viewer),
     message: this.post.message
   }
 }

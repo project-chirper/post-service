@@ -4,9 +4,9 @@ const mongoose = require('mongoose'),
 
 /**
  * @desc Create a plain post
- * @param { userId, message }
+ * @param { message }
  */
-module.exports = async (req, res) => {
+module.exports = async (req, res, next) => {
   // Create a BasePost
   let basePost = new BasePost({
     message: req.body.message
@@ -23,7 +23,7 @@ module.exports = async (req, res) => {
 
   // Create a Post and assign BasePost to it
   let post = new Post({
-    author: req.body.userId,
+    author: req.user,
     body: basePost._id,
     type: 'BasePost'
   })
@@ -35,6 +35,9 @@ module.exports = async (req, res) => {
     next(err)
   }
 
+  // Manually populate Post
+  post.body = basePost
+
   // Return post public data
-  return res.json(post.publicData())
+  return res.json(await post.publicData(req.user))
 }

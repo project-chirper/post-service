@@ -1,9 +1,10 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose'),
+      fetchUser = require('../common/fetchUser')
 
 const PostSchema = mongoose.Schema({
   author: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    required: [true, 'Author is required']
   },
   dateCreated: {
     type: Date,
@@ -35,18 +36,31 @@ const PostSchema = mongoose.Schema({
   collection: 'posts'
 })
 
-PostSchema.methods.publicData = function() {
+/**
+ * @desc Returns Post public data
+ * @param viewer Viewer ID
+ * @return JSON
+ */
+PostSchema.methods.publicData = async function(viewer) {
+  // Fetch viewer
+  viewer = viewer ? await fetchUser(viewer) : false // If viewer specified, fetch viewer and overwrite parameter
+  let author = viewer.id == this.author ? viewer : await fetchUser(this.author) // If viewer is also author, set to viewer else fetch author
+
   return {
     id: this._id,
-    author: this.author,
+    author: {
+      id: author.id,
+      username: author.username
+    },
     dateCreated: this.dateCreated,
-    body: this.body.publicData(),
+    body: await this.body.publicData(viewer),
     type: this.type,
     stats: {
       likes: this.likedBy.length,
       reposts: this.repostedBy.length,
       replies: this.replies.length
-    }
+    },
+    hasLiked: viewer ? this.likedBy.indexOf(viewer._id) >= 0 : false
   }
 }
 

@@ -11,7 +11,10 @@ router.param('post_id', async (req, res, next, postId) => {
   next()
 })
 
-router.post('/', require('./create')) // create a post
-
+// create a post
+router.post('/', 
+  auth({ required: true }),
+  require('./create')
+) 
 
 module.exports = router

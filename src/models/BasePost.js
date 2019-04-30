@@ -11,6 +11,10 @@ const BasePostSchema = new mongoose.Schema({
   collection: 'baseposts'
 })
 
+/**
+ * @desc Returns BasePost public data | BasePost has no 'viewer' param since the data is not viewer-tailored like the others
+ * @return JSON
+ */
 BasePostSchema.methods.publicData = function() {
   return {
     id: this._id,
