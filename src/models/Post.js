@@ -42,6 +42,18 @@ const PostSchema = mongoose.Schema({
  * @return JSON
  */
 PostSchema.methods.publicData = async function(viewer) {
+  // Properly populate document
+  switch(this.type) {
+    case 'Repost':
+      await this.populate({
+        path: 'body.repost',
+        populate: {
+          path: 'body'
+        }
+      }).execPopulate()
+      break
+  }
+
   // Fetch viewer
   viewer = viewer ? await fetchUser(viewer) : false // If viewer specified, fetch viewer and overwrite parameter
   let author = viewer.id == this.author ? viewer : await fetchUser(this.author) // If viewer is also author, set to viewer else fetch author

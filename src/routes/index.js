@@ -8,6 +8,7 @@ router.param('post_id', async (req, res, next, postId) => {
   if (!mongoose.Types.ObjectId.isValid(postId)) return res.sendStatus(404) // Invalid Post ID
   req.targetPost = await Post.findById(postId).populate('body')
   if (!req.targetPost) return res.sendStatus(404) // Post not found 404
+
   next()
 })
 
@@ -28,5 +29,8 @@ router.post('/:post_id/repost',
   auth({ required: true }),
   require('./repost')
 )
+
+// fetch a post
+router.get('/:post_id', async (req, res) => res.json(await req.targetPost.publicData(req.user)))
 
 module.exports = router
