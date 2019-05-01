@@ -13,24 +13,18 @@ router.param('post_id', async (req, res, next, postId) => {
 })
 
 // create a post
-router.post('/', 
-  auth({ required: true }),
-  require('./create')
-)
+router.post('/', auth({ required: true }), require('./create'))
 
 // reply to a post
-router.post('/:post_id/reply',
-  auth({ required: true }),
-  require('./reply')
-)
+router.post('/:post_id/reply', auth({ required: true }), require('./reply'))
 
 // repost a post
-router.post('/:post_id/repost',
-  auth({ required: true }),
-  require('./repost')
-)
+router.post('/:post_id/repost', auth({ required: true }), require('./repost'))
 
 // fetch a post
-router.get('/:post_id', async (req, res) => res.json(await req.targetPost.publicData(req.user)))
+router.get('/:post_id', auth({ required: false }), async (req, res) => res.json(await req.targetPost.publicData({ viewer: req.user, depth: 1 })))
+
+// like a post
+router.put('/:post_id/like', auth({ required: true }), require('./like'))
 
 module.exports = router

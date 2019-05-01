@@ -21,7 +21,7 @@ const PostReplySchema = new mongoose.Schema({
 PostReplySchema.methods.publicData = async function(viewer) {
   return {
     id: this._id,
-    replyingTo: await this.replyingTo.publicData(viewer),
+    replyingTo: await this.replyingTo.publicData({ viewer }),
     message: this.post.message
   }
 }

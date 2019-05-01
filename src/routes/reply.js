@@ -53,5 +53,5 @@ module.exports = async (req, res, next) => {
   post.body = postReply
 
   // Return post public data
-  return res.json(await post.publicData(req.user))
+  return res.json(await post.publicData({ viewer: req.user, depth: 1 }))
 }
