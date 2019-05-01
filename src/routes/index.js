@@ -12,19 +12,19 @@ router.param('post_id', async (req, res, next, postId) => {
   next()
 })
 
-// create a post
-router.post('/', auth({ required: true }), require('./create'))
-
-// reply to a post
-router.post('/:post_id/reply', auth({ required: true }), require('./reply'))
-
-// repost a post
-router.post('/:post_id/repost', auth({ required: true }), require('./repost'))
+router.post('/', auth({ required: true }), require('./create')) // create a post
+router.post('/:post_id/reply', auth({ required: true }), require('./reply')) // reply to a post
+router.post('/:post_id/repost', auth({ required: true }), require('./repost')) // repost a post
+router.put('/:post_id/like', auth({ required: true }), require('./like')) // like a post
 
 // fetch a post
-router.get('/:post_id', auth({ required: false }), async (req, res) => res.json(await req.targetPost.publicData({ viewer: req.user, depth: 1 })))
+router.get(
+  '/:post_id', 
+  auth({ required: false }), 
+  async (req, res) => res.json(await req.targetPost.publicData({ viewer: req.user, depth: 1 }))
+)
 
-// like a post
-router.put('/:post_id/like', auth({ required: true }), require('./like'))
+// fetch a users posts
+router.get('/author/:user_id', auth({ required: false }), require('./author'))
 
 module.exports = router

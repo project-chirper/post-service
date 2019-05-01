@@ -42,21 +42,8 @@ const PostSchema = mongoose.Schema({
  * @param depth Controls how deep reposts should be returned, by default 1
  * @return JSON
  */
-PostSchema.methods.publicData = async function({ viewer, depth }) {
-  // Properly populate document
-  switch(this.type) {
-    case 'Repost':
-      await this.populate([
-        {
-          path: 'body.repost',
-          populate: {
-            path: 'body'
-          }
-        },
-        { path: 'body.post' }
-      ]).execPopulate()
-      break
-  }
+PostSchema.methods.publicData = async function({ viewer = false, depth = 1 } = {}) {
+  await this.populateBody() // properly populate body
 
   // If depth is at -1, return id only
   if (depth && depth === -1) return this._id
@@ -95,6 +82,31 @@ PostSchema.methods.publicData = async function({ viewer, depth }) {
   }
 
   return publicData
+}
+
+PostSchema.methods.populateBody = async function() {
+  // Properly populate document
+  await this.populate('body').execPopulate()
+
+  switch(this.type) {
+    case 'PostReply':
+      await this.populate([
+        { path: 'body.replyingTo' },
+        { path: 'post' }
+      ]).execPopulate()
+      break
+    case 'Repost':
+      await this.populate([
+        {
+          path: 'body.repost',
+          populate: {
+            path: 'body'
+          }
+        },
+        { path: 'body.post' }
+      ]).execPopulate()
+      break
+  }
 }
 
 mongoose.model('Post', PostSchema)
