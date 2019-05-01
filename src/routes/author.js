@@ -12,7 +12,6 @@ module.exports = async (req, res, next) => {
   // Validate user id
   if (!mongoose.Types.ObjectId.isValid(req.params.user_id)) res.sendStatus(404) // User ID invalid
   // Normalize options
-
   let options = {
     amount: req.query.amount ? parseInt(req.query.amount) : 10, // default 10
     offset: req.query.offset ? parseInt(req.query.offset) : 0 // default 0
@@ -27,8 +26,8 @@ module.exports = async (req, res, next) => {
   // Return posts
   return res.json({
     count: posts.length,
-    author: posts[0] ? await posts[0].publicData() : undefined,
-    posts: await Promise.all(posts.map(async (post) => { 
+    author: posts[0] ? (await posts[0].publicData()).author : undefined,
+    posts: await Promise.all(posts.map(async post => { 
       let publicPost = await post.publicData({ viewer: req.user, depth: 1 })
       delete publicPost.author
       return publicPost

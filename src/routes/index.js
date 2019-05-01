@@ -17,7 +17,9 @@ router.get(
   async (req, res) => res.json(await req.targetPost.publicData({ viewer: req.user, depth: 1 }))
 )
 
-// fetch a users posts
-router.get('/author/:user_id', auth({ required: false }), require('./author'))
+router.get('/author/:user_id', auth({ required: false }), require('./author')) // fetch a users posts
+router.get('/:post_id/replies', auth({ required: false }), loadPost('replies'), require('./replies')) // Fetch a posts replies
+
+router.get('/', auth({ required: true }), require('./timeline')) // get user-tailored timeline
 
 module.exports = router
