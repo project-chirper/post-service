@@ -47,11 +47,6 @@ module.exports = async (req, res, next) => {
     next(err)
   }
 
-  // Manually populate Post
-  postReply.post = basePost
-  postReply.replyingTo = req.targetPost
-  post.body = postReply
-
   // Return post public data
   return res.json(await post.publicData({ viewer: req.user, depth: 1 }))
 }

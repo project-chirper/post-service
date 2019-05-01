@@ -92,7 +92,7 @@ PostSchema.methods.populateBody = async function() {
     case 'PostReply':
       await this.populate([
         { path: 'body.replyingTo' },
-        { path: 'post' }
+        { path: 'body.post' }
       ]).execPopulate()
       break
     case 'Repost':

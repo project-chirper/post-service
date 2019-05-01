@@ -35,9 +35,6 @@ module.exports = async (req, res, next) => {
     next(err)
   }
 
-  // Manually populate Post
-  post.body = basePost
-
   // Return post public data
   return res.json(await post.publicData({ viewer: req.user }))
 }
