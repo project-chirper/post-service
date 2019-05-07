@@ -58,7 +58,7 @@ PostSchema.methods.publicData = async function({ viewer = false, depth = 0 } = {
         author: {
           id: author.id,
           username: author.username,
-          isFollowing: viewer ? checkFollowing(viewer.id, author.id) : false
+          isFollowing: viewer ? await checkFollowing(viewer.id, author.id) : false
         }
       }
     case 2: // If depth is at 2, only return post id
@@ -71,7 +71,7 @@ PostSchema.methods.publicData = async function({ viewer = false, depth = 0 } = {
     author: {
       id: author.id,
       username: author.username,
-      isFollowing: viewer ? checkFollowing(viewer.id, author.id) : false
+      isFollowing: viewer ? await checkFollowing(viewer.id, author.id) : false
     },
     dateCreated: this.dateCreated,
     body: await this.body.publicData({ viewer }),
