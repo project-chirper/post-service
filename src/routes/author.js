@@ -28,7 +28,7 @@ module.exports = async (req, res, next) => {
     count: posts.length,
     author: posts[0] ? (await posts[0].publicData()).author : undefined,
     posts: await Promise.all(posts.map(async post => { 
-      let publicPost = await post.publicData({ viewer: req.user, depth: 1 })
+      let publicPost = await post.publicData({ viewer: req.user })
       delete publicPost.author
       return publicPost
     }))

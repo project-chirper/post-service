@@ -52,7 +52,7 @@ router.get('/', async (req, res, next) => {
   // Return posts
   return res.json({
     count: posts.length,
-    posts: await Promise.all(posts.map(async post => await post.publicData({ viewer: req.user, depth: 1 })))
+    posts: await Promise.all(posts.map(async post => await post.publicData({ viewer: req.user })))
   })
 })
 

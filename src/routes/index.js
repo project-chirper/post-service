@@ -19,7 +19,7 @@ router.get(
   '/:post_id',
   auth({ required: false }),
   loadPost(),
-  async (req, res) => res.json(await req.targetPost.publicData({ viewer: req.user, depth: 1 }))
+  async (req, res) => res.json(await req.targetPost.publicData({ viewer: req.user }))
 )
 
 module.exports = router

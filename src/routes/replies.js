@@ -24,9 +24,9 @@ module.exports = async (req, res, next) => {
   // Return replies
   return res.json({
     count: replies.length,
-    replyingTo: replies[0] ? (await replies[0].publicData({ viewer: req.user, depth: 1 })).body.replyingTo : undefined,
+    replyingTo: replies[0] ? (await replies[0].publicData({ viewer: req.user })).body.replyingTo : undefined,
     replies: await Promise.all(replies.map(async reply => {
-      let publicReply = await reply.publicData({ viewer: req.user, depth: 1 })
+      let publicReply = await reply.publicData({ viewer: req.user })
       delete publicReply.body.replyingTo
       return publicReply
     }))
