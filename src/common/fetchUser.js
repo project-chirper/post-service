@@ -9,7 +9,7 @@ const axios = require('axios')
 module.exports = async (userId, select = undefined) => {
   try {
     let response = await axios({
-      url: `http://api-gateway:3001/user/${userId}${select ? `?select=${select}` : '' }`,
+      url: `http://api-gateway:3001/api/user/${userId}${select ? `?select=${select}` : '' }`,
       method: 'get',
       responseType: 'json'
     })

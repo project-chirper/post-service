@@ -1,14 +1,21 @@
-const mongoose = require('mongoose'),
+const router = require('express').Router(),
+      mongoose = require('mongoose'),
       Post = mongoose.model('Post'),
       axios = require('axios')
 
+router.get('/new', require('./new')) // get new posts since last fetched timeline
+
 /**
  * @desc Prepares a users timeline
+ * @query firstPostId the first post id fetched
  * @query amount Amount of posts to fetch (limit)
  * @query offset Current page (skip = amount*offset)
  * @return JSON of post public data
  */
-module.exports = async (req, res, next) => {
+router.get('/', async (req, res, next) => {
+  // Validate firstPostId
+  if (req.query.forstPostId && !mongoose.Types.ObjectId.isValid(firstPostId)) res.sendStatus(404) // Unknown first post id
+
   // Normalize options
   let options = {
     amount: req.query.amount ? parseInt(req.query.amount) : 25, // default 25
@@ -22,7 +29,7 @@ module.exports = async (req, res, next) => {
   let following
   try {
     let response = await axios({
-      url: `http://api-gateway:3001/user/${req.user}/following`,
+      url: `http://api-gateway:3001/api/user/${req.user}/following`,
       method: 'get',
       responseType: 'json'
     })
@@ -35,11 +42,18 @@ module.exports = async (req, res, next) => {
   following.push(req.user)
 
   // Prepare timeline
-  let posts = await Post.find({ author: { $in: following } }).skip(options.offset * options.amount).limit(options.amount).sort('-dateCreated')
+  let query = {
+    author: { $in: following }
+  }
+  if (req.query.firstPostId) query._id = { $lte: req.query.firstPostId } // add first post id
+
+  let posts = await Post.find(query).skip(options.offset * options.amount).limit(options.amount).sort('-dateCreated')
 
   // Return posts
   return res.json({
     count: posts.length,
     posts: await Promise.all(posts.map(async post => await post.publicData({ viewer: req.user, depth: 1 })))
   })
-}
+})
+
+module.exports = router

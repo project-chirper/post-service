@@ -45,14 +45,20 @@ const PostSchema = mongoose.Schema({
 PostSchema.methods.publicData = async function({ viewer = false, depth = 1 } = {}) {
   await this.populateBody() // properly populate body
 
-  // If depth is at -1, return id only
-  if (depth && depth === -1) return this._id
-
   // Fetch viewer
-  viewer = typeof viewer === 'string' ? await fetchUser(viewer, 'username') : viewer // If viewer specified, fetch viewer and overwrite parameter
+  viewer = typeof viewer === 'string' ? await fetchUser(viewer, 'username') : viewer // If viewer specified, fetch viewer and overwrite parameter  
   // Fetch author - if author and viewer are same, simply set author to viewer also
   let author = viewer.id == this.author ? viewer : await fetchUser(this.author, 'username') // If viewer is also author, set to viewer else fetch author
-  
+
+  // If depth is at -1, return author only
+  if (depth && depth === -1) return {
+    id: this._id,
+    author: {
+      id: author.id,
+      username: author.username
+    }
+  }
+
   // Public Data
   let publicData = {
     id: this._id,
