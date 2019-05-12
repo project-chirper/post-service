@@ -1,5 +1,6 @@
 const mongoose = require('mongoose'),
-      Post = mongoose.model('Post')
+      Post = mongoose.model('Post'),
+      PostReply = mongoose.model('PostReply')
 
 /**
  * @desc Fetches replies for specific post
@@ -14,7 +15,7 @@ module.exports = async (req, res) => {
   if (req.query.firstReplyId && !mongoose.Types.ObjectId.isValid(req.query.firstReplyId)) return res.sendStatus(404) // invalid first reply id
   // Normalize options
   let options = {
-    amount: req.query.amount ? parseInt(req.query.amount) : 5, // default 10
+    amount: req.query.amount ? parseInt(req.query.amount) : 10, // default 10
     offset: req.query.offset ? parseInt(req.query.offset) : 0 // default 0
   }
   // Validate options
@@ -29,13 +30,5 @@ module.exports = async (req, res) => {
   let replies = await Post.find(query).skip(options.offset * options.amount).limit(options.amount).sort('-dateCreated')
 
   // Return replies
-  return res.json({
-    count: replies.length,
-    replyingTo: replies[0] ? (await replies[0].publicData({ viewer: req.user })).body.replyingTo : undefined,
-    replies: await Promise.all(replies.map(async reply => {
-      let publicReply = await reply.publicData({ viewer: req.user })
-      delete publicReply.body.replyingTo
-      return publicReply
-    }))
-  })
+  return res.json(await PostReply.formatReplies(replies, req.user))
 }

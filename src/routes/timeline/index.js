@@ -1,7 +1,7 @@
 const router = require('express').Router(),
       mongoose = require('mongoose'),
       Post = mongoose.model('Post'),
-      axios = require('axios')
+      checkFollowing = require('../../common/checkFollowing')
 
 router.get('/new', require('./new')) // get new posts since last fetched timeline
 
@@ -27,12 +27,7 @@ router.get('/', async (req, res, next) => {
   // Get who the user is following
   let following
   try {
-    let response = await axios({
-      url: `http://api-gateway:3001/api/user/${req.user}/following`,
-      method: 'get',
-      responseType: 'json'
-    })
-    following = response.data
+    following = await checkFollowing(req.user)
   } catch (err) {
     next(err)
   }

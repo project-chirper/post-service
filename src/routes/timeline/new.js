@@ -1,6 +1,6 @@
 const mongoose = require('mongoose'),
-      axios = require('axios'),
-      Post = mongoose.model('Post')
+      Post = mongoose.model('Post'),
+      checkFollowing = require('../../common/checkFollowing')
 
 /**
  * @desc Loads all new posts since last sent post
@@ -14,12 +14,7 @@ module.exports = async (req, res, next) => {
   // Get who the user is following
   let following
   try {
-    let response = await axios({
-      url: `http://api-gateway:3001/api/user/${req.user}/following`,
-      method: 'get',
-      responseType: 'json'
-    })
-    following = response.data
+    following = await checkFollowing(req.user)
   } catch (err) {
     next(err)
   }

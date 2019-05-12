@@ -51,23 +51,21 @@ PostSchema.methods.publicData = async function({ viewer = false, depth = 0 } = {
   // Fetch author - if author and viewer are same, simply set author to viewer also
   let author = viewer.id == this.author ? viewer : await fetchUser(this.author, 'username') // If viewer is also author, set to viewer else fetch author
 
-  if (depth >=2 ) return {
+  let authorData = {
+    id: author.id,
+    username: author.username,
+    isFollowing: viewer ? await checkFollowing(viewer.id, author.id) : false
+  }
+ 
+  if (depth >= 2) return {
     id: this._id,
-    author: {
-      id: author.id,
-      username: author.username,
-      isFollowing: viewer ? await checkFollowing(viewer.id, author.id) : false
-    }
+    author: authorData
   }
 
   // Public Data
   let publicData = {
     id: this._id,
-    author: {
-      id: author.id,
-      username: author.username,
-      isFollowing: viewer ? await checkFollowing(viewer.id, author.id) : false
-    },
+    author: authorData,
     dateCreated: this.dateCreated,
     body: await this.body.publicData({ viewer }),
     type: this.type,

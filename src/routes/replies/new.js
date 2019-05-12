@@ -1,5 +1,6 @@
 const mongoose = require('mongoose'),
-      Post = mongoose.model('Post')
+      Post = mongoose.model('Post'),
+      PostReply = mongoose.model('PostReply')
 
 /**
  * @desc Loads all new replies of a post since last replies fetched
@@ -18,13 +19,5 @@ module.exports = async (req, res) => {
     }
   }).sort('-dateCreated')
 
-  return res.json({
-    count: replies.length,
-    replyingTo: replies[0] ? (await replies[0].publicData({ viewer: req.user })).body.replyingTo : undefined,
-    replies: await Promise.all(replies.map(async reply => {
-      let publicReply = await reply.publicData({ viewer: req.user })
-      delete publicReply.body.replyingTo
-      return publicReply
-    }))
-  })
+  return res.json(await PostReply.formatReplies(replies, req.user))
 }
