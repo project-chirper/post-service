@@ -4,11 +4,20 @@ const mongoose = require('mongoose'),
 /**
  * @desc Fetches replies from specific post
  * @param post_id The post id to fetch from
+ * @query firstReplyId the first reply id fetched
  * @query amount Amount of replies to fetch (limit)
  * @query offset Current page (skip = amount*offset)
  * @return JSON of reply public data
  */
-module.exports = async (req, res, next) => {
+module.exports = async (req, res) => {
+  // Validate firstReplyId
+  //if (req.query.f)
+}
+
+
+
+
+let x = async function (req, res) {
   // Normalize options
   let options = {
     amount: req.query.amount ? parseInt(req.query.amount) : 10, // default 10

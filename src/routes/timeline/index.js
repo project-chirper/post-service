@@ -14,11 +14,11 @@ router.get('/new', require('./new')) // get new posts since last fetched timelin
  */
 router.get('/', async (req, res, next) => {
   // Validate firstPostId
-  if (req.query.forstPostId && !mongoose.Types.ObjectId.isValid(firstPostId)) res.sendStatus(404) // Unknown first post id
+  if (req.query.firstPostId && !mongoose.Types.ObjectId.isValid(req.query.firstPostId)) res.sendStatus(404) // Unknown first post id
 
   // Normalize options
   let options = {
-    amount: req.query.amount ? parseInt(req.query.amount) : 25, // default 25
+    amount: req.query.amount ? parseInt(req.query.amount) : 5, // default 25
     offset: req.query.offset ? parseInt(req.query.offset) : 0 // default 0
   }
   // Validate options
