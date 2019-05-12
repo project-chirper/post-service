@@ -1,7 +1,7 @@
 const router = require('express').Router(),
       mongoose = require('mongoose'),
       Post = mongoose.model('Post'),
-      axios = require('axios')
+      checkFollowing = require('../../common/checkFollowing')
 
 router.get('/new', require('./new')) // get new posts since last fetched timeline
 
@@ -14,7 +14,7 @@ router.get('/new', require('./new')) // get new posts since last fetched timelin
  */
 router.get('/', async (req, res, next) => {
   // Validate firstPostId
-  if (req.query.forstPostId && !mongoose.Types.ObjectId.isValid(firstPostId)) res.sendStatus(404) // Unknown first post id
+  if (req.query.firstPostId && !mongoose.Types.ObjectId.isValid(req.query.firstPostId)) return res.sendStatus(404) // Unknown first post id
 
   // Normalize options
   let options = {
@@ -22,18 +22,12 @@ router.get('/', async (req, res, next) => {
     offset: req.query.offset ? parseInt(req.query.offset) : 0 // default 0
   }
   // Validate options
-  if (options.amount <= 0 || options.amount > 25) return res.sendStatus(401) // Unauthorized
-  if (options.offset < 0) return res.sendStatus(404) // Page not found 404
+  if (options.amount <= 0 || options.amount > 25 || options.offset < 0) return res.sendStatus(422) // Unauthorized
 
   // Get who the user is following
   let following
   try {
-    let response = await axios({
-      url: `http://api-gateway:3001/api/user/${req.user}/following`,
-      method: 'get',
-      responseType: 'json'
-    })
-    following = response.data
+    following = await checkFollowing(req.user)
   } catch (err) {
     next(err)
   }

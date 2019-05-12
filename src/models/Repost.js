@@ -20,7 +20,7 @@ const RepostSchema = mongoose.Schema({
  */
 RepostSchema.methods.publicData = async function(viewer) {
   return {
-    id: this._id,
+    //id: this._id, not needed
     repost: await this.repost.publicData({ viewer }),
     message: this.post.message
   }

@@ -17,7 +17,7 @@ const BasePostSchema = new mongoose.Schema({
  */
 BasePostSchema.methods.publicData = function() {
   return {
-    id: this._id,
+    //id: this._id, not needed
     message: this.message
   }
 }

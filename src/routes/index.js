@@ -12,9 +12,11 @@ router.post('/:post_id/repost', auth({ required: true }), loadPost('repostedBy')
 router.put('/:post_id/like', auth({ required: true }), loadPost('likedBy'), require('./like')) // like a post
 
 router.get('/author/:user_id', auth({ required: false }), require('./author')) // fetch a users posts
-router.get('/:post_id/replies', auth({ required: false }), loadPost('replies'), require('./replies')) // Fetch a posts replies
 
-// fetch a post
+router.get('/:post_id/replies', auth({ required: false }), loadPost('replies'), require('./replies')) // Fetch a posts replies
+router.get('/:post_id/replies/new', auth({ required: false }), loadPost('replies'), require('./replies/new')) // fetch new replies since last fetch
+
+// fetch a post | THIS NEEDS TO BE LAST
 router.get(
   '/:post_id',
   auth({ required: false }),

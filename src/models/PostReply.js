@@ -20,9 +20,21 @@ const PostReplySchema = new mongoose.Schema({
  */
 PostReplySchema.methods.publicData = async function(viewer) {
   return {
-    id: this._id,
+    //id: this._id, not needed
     replyingTo: await this.replyingTo.publicData({ viewer }),
     message: this.post.message
+  }
+}
+
+PostReplySchema.statics.formatReplies = async function(replies, viewer) {
+  return {
+    count: replies.length,
+    replyingTo: replies[0] ? (await replies[0].publicData({ viewer })).body.replyingTo : undefined,
+    replies: await Promise.all(replies.map(async reply => {
+      let publicReply = await reply.publicData({ viewer })
+      delete publicReply.body.replyingTo
+      return publicReply
+    }))
   }
 }
 
