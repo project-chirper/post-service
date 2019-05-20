@@ -13,8 +13,7 @@ router.put('/:post_id/like', auth({ required: true }), loadPost('likedBy'), requ
 
 router.get('/author/:user_id', auth({ required: false }), require('./author')) // fetch a users posts
 
-router.get('/:post_id/replies', auth({ required: false }), loadPost('replies'), require('./replies')) // Fetch a posts replies
-router.get('/:post_id/replies/new', auth({ required: false }), loadPost('replies'), require('./replies/new')) // fetch new replies since last fetch
+router.use('/:post_id/replies', auth({ required: false }), loadPost('replies'), require('./replies')) // Fetch a posts replies
 
 // fetch a post | THIS NEEDS TO BE LAST
 router.get(

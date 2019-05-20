@@ -1,6 +1,9 @@
-const mongoose = require('mongoose'),
+const router = require('express').Router(),
+      mongoose = require('mongoose'),
       Post = mongoose.model('Post'),
       PostReply = mongoose.model('PostReply')
+
+router.get('/new', require('./new'))
 
 /**
  * @desc Fetches replies for specific post
@@ -10,7 +13,7 @@ const mongoose = require('mongoose'),
  * @query amount Amount of replies to fetch (limit)
  * @return JSON of reply public data
  */
-module.exports = async (req, res) => {
+router.get('/', async (req, res) => {
   // Validate firstReplyId
   if (req.query.firstReplyId && !mongoose.Types.ObjectId.isValid(req.query.firstReplyId)) return res.sendStatus(404) // invalid first reply id
   // Normalize options
@@ -31,4 +34,6 @@ module.exports = async (req, res) => {
 
   // Return replies
   return res.json(await PostReply.formatReplies(replies, req.user))
-}
+})
+
+module.exports = router
