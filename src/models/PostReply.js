@@ -18,10 +18,10 @@ const PostReplySchema = new mongoose.Schema({
  * @param viewer Viewer ID
  * @return JSON
  */
-PostReplySchema.methods.publicData = async function(viewer) {
+PostReplySchema.methods.publicData = async function({ viewer, depth }) {
   return {
     //id: this._id, not needed
-    replyingTo: await this.replyingTo.publicData({ viewer }),
+    replyingTo: await this.replyingTo.publicData({ viewer, depth }),
     message: this.post.message
   }
 }

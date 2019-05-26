@@ -13,6 +13,7 @@ router.get('/new', require('./new')) // get new posts since last fetched timelin
  * @return JSON of post public data
  */
 router.get('/', async (req, res, next) => {
+
   // Validate firstPostId
   if (req.query.firstPostId && !mongoose.Types.ObjectId.isValid(req.query.firstPostId)) return res.sendStatus(404) // Unknown first post id
 
@@ -24,6 +25,7 @@ router.get('/', async (req, res, next) => {
   // Validate options
   if (options.amount <= 0 || options.amount > 25 || options.offset < 0) return res.sendStatus(422) // Unauthorized
 
+  
   // Get who the user is following
   let following
   try {
@@ -31,6 +33,7 @@ router.get('/', async (req, res, next) => {
   } catch (err) {
     next(err)
   }
+  
 
   // Add own Id to following array, to show own posts in timeline
   following.push(req.user)

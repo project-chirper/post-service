@@ -44,8 +44,6 @@ const PostSchema = mongoose.Schema({
  * @return JSON
  */
 PostSchema.methods.publicData = async function({ viewer = false, depth = 0 } = {}) {
-  await this.populateBody() // properly populate body
-
   // Fetch viewer
   viewer = typeof viewer === 'string' ? await fetchUser(viewer, 'username') : viewer // If viewer specified, fetch viewer and overwrite parameter  
   // Fetch author - if author and viewer are same, simply set author to viewer also
@@ -56,18 +54,20 @@ PostSchema.methods.publicData = async function({ viewer = false, depth = 0 } = {
     username: author.username,
     isFollowing: viewer ? await checkFollowing(viewer.id, author.id) : false
   }
- 
+
   if (depth >= 2) return {
     id: this._id,
     author: authorData
   }
+
+  await this.populateBody(depth) // properly populate body
 
   // Public Data
   let publicData = {
     id: this._id,
     author: authorData,
     dateCreated: this.dateCreated,
-    body: await this.body.publicData({ viewer }),
+    body: await this.body.publicData({ viewer, depth: depth+1 }),
     type: this.type,
     stats: {
       likes: this.likedBy.length,
@@ -77,20 +77,10 @@ PostSchema.methods.publicData = async function({ viewer = false, depth = 0 } = {
     hasLiked: viewer ? this.likedBy.indexOf(viewer.id) >= 0 : false
   }
 
-  // For each post type properly call .publicData()
-  switch(this.type) {
-    case 'Repost':
-      publicData.body.repost = await this.body.repost.publicData({ viewer, depth: depth+1 })
-      break
-    case 'PostReply':
-      publicData.body.replyingTo = await this.body.replyingTo.publicData({ viewer, depth: depth+1 })
-      break
-  }
-
   return publicData
 }
 
-PostSchema.methods.populateBody = async function() {
+PostSchema.methods.populateBody = async function(depth = 0) {
   // Properly populate document
   await this.populate('body').execPopulate()
 

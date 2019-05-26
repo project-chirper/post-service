@@ -9,8 +9,6 @@ const mongoose = require('mongoose'),
  * @return JSON of post public data
  */
 module.exports = async (req, res, next) => {
-  console.log("hi")
-
   // Validate user id
   if (!mongoose.Types.ObjectId.isValid(req.params.user_id)) return res.sendStatus(404) // User ID invalid
   // Validate firstPostId
