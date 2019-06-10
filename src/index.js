@@ -9,7 +9,7 @@ const app = express()
 app.use(bodyParser.json())
 
 // Mongoose connection
-mongoose.connect('mongodb://mongodb:27017/chirper', { useNewUrlParser: true })
+mongoose.connect(process.env.MONGO_URI ? process.env.MONGO_URI : 'mongodb://mongodb:27017/chirper', { useNewUrlParser: true })
 
 // Models
 require('./models')

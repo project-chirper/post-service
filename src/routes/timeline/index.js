@@ -23,7 +23,7 @@ router.get('/', async (req, res, next) => {
     offset: req.query.offset ? parseInt(req.query.offset) : 0 // default 0
   }
   // Validate options
-  if (options.amount <= 0 || options.amount > 25 || options.offset < 0) return res.sendStatus(422) // Unauthorized
+  if (options.amount <= 0 || options.amount > 25 || options.offset < 0) return res.sendStatus(422) // Unprocessable entity
 
   
   // Get who the user is following
